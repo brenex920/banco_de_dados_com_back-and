@@ -11,6 +11,9 @@ const cors       = require('cors')
 const bodyParser = require('body-parser')
 const {request, get} = require('http')
 
+// cria um objeto especialista em JSON para receber os dados do body (POST E PUT)
+const bodyParserJSON = bodyParser.json()
+
 const PORT =  process.PORT || 8090;
 
 const app = express()
@@ -47,7 +50,20 @@ app.get('/v1/locadora/filme/:id', cors(),async function(request, response){
     response.status(filme.status_code)
     response.json(filme)
     })
+
     
+app.post('/v1/locadora/filme', cors(), bodyParserJSON, async function(req, res){
+    // recebe o objeto JSON pelo body da requisição
+    let dadosBody = req.body
+
+    let contentType = req.headers['content-type']
+
+    //chama a função da controller para inserir o filme, enviamos os dados do body e o content-type
+    let filme = await controllerfilme.inserirFilme(dadosBody, contentType)
+
+    res.status(filme.status_code)
+    res.json(filme)
+})
 
 app.listen(PORT, function(){
     console.log('API aguardado requisições!!!!!')
