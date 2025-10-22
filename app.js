@@ -28,7 +28,7 @@ app.use((request, response, next)=>{
 })
 
 const controllerfilme = require('./controller/controller_filme.js')
-
+const controllergenero = require('./controller/controller_genero.js')
 
 // Endpoint para o CRUD filmes 
 app.get('/v1/locadora/filmes', cors(),async function(request, response){
@@ -84,6 +84,28 @@ app.delete('/v1/locadora/filme/:id', cors(), async function(req, res){
     res.status(filme.status_code)
     res.json(filme)
 })
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//app da tabela genero
+
+
+app.get('/v1/locadora/generos', cors(), async function(request, response){
+    let generos = await controllergenero.listaGenero()
+
+    console.log(generos)
+    response.status(generos.status_code)
+    response.json(generos)
+})
+app.get('/v1/locadora/genero/:id', cors(), async function(req, res){
+    let idGenero = req.params.id
+
+    let genero = await controllergenero.filtroGeneroId(idGenero)
+
+    res.status(genero.status_code)
+    res.json(genero)
+})
+
+
 app.listen(PORT, function(){
     console.log('API aguardado requisições!!!!!')
 })

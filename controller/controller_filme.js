@@ -2,7 +2,7 @@
  * Objetivo: Aquivo responsavel pela manipulação de dados em APP e Model 
  *                  
  *              (Validações, Tratamento de dados, Tratamento de erros)
- * 
+ *                 [FILME]
  * 
  * Data: 07/10/2025
  * Autor: Breno Dias Machado 
@@ -97,11 +97,22 @@ const inserirFilme = async function(filme, contentType) {
                 let result = await filmeDAO.setInsertFilms(filme)
                     
                 if(result){
+
+
+                    // chama a função para receber o ID gerado no BD
+                    let lastIdFilme = await filmeDAO.getSellectLastIdFilme()  
+
+                    if(lastIdFilme){
+
+                    //Adiciona no JSON o ID que foi gerado no BD
+                    filme.id                    = lastIdFilme
+
                     MESSAGE.HEADER.status       = MESSAGE.SUCCESS_CREATED_ITEM.status
                     MESSAGE.HEADER.status_code  = MESSAGE.SUCCESS_CREATED_ITEM.status_code
                     MESSAGE.HEADER.message      = MESSAGE.SUCCESS_CREATED_ITEM.message
-                    
-                    return MESSAGE.HEADER
+                    MESSAGE.HEADER.response     = filme
+
+                    return MESSAGE.HEADER//201
                 }else{
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL//500
                 }
@@ -111,7 +122,9 @@ const inserirFilme = async function(filme, contentType) {
         }else{
             return MESSAGE.ERROR_CONTENT_TYPE//415
         }
-  
+     }else{
+        return MESSAGE.ERROR_CONTENT_TYPE//415
+     }
     } catch (error) {
         console.log(error)
         return MESSAGE_DEFAULT.ERROR_INTERNAL_SERVER_CONTROLLER//500
@@ -208,7 +221,7 @@ const validarDadosFilme = async function(filme){
     if(filme.nome == '' || filme.nome == null || filme.nome == undefined || filme.nome.length > 100){
         MESSAGE.ERROR_REQUIRED_FILDS.invalid_fild = 'Atrbuto [NOME] invalido!!!!!!!!' 
         return MESSAGE.ERROR_REQUIRED_FILDS//400
-
+        
     }else if(filme.sinopse == undefined ){
         MESSAGE.ERROR_REQUIRED_FILDS.invalid_fild = 'Atrbuto [SINOPSE] invalido!!!!!!!!'
         return MESSAGE.ERROR_REQUIRED_FILDS//400
