@@ -10,7 +10,7 @@
  *****************************************************************/
 const generoDAO = require('../model/DAO/genero.js');
 const  MESSAGE_DEFAULT = require('../modulo/confg_menssages.js');
-const validarDados = require('../controller/controller_filme.js');
+
 
 
 const listaGenero = async function(){
@@ -68,30 +68,70 @@ const filtroGeneroId = async function(id){
         }
 }
 const inserirGenero = async function(genero, contentType){
-    let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
+     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
+        try {
     
-    try {
-        if(String(contentType).toUpperCase() == 'APPLICATION/JSON'){
-            let validarDados = validar
+            if(String(contentType).toUpperCase() == 'APPLICATION/JSON'){
+               //Chama a função de validação dos dados de cadastro
+                let validarDados = await validarDadosGenero(genero)
+    
+                if(!validarDados){
+                 
+    
+                    // chama a funçao do DAO para inserir um novo filme 
+                    let result = await generoDAO.setInsertGenero(genero)
+                        
+                    if(result){
+    
+    
+                        // chama a função para receber o ID gerado no BD
+                        let lastIdGenero = await generoDAO.getSelectByIdAllGenero()  
+    
+                        if(lastIdGenero){
+    
+                        //Adiciona no JSON o ID que foi gerado no BD
+                        genero.id                    = lastIdGenero
+    
+                        MESSAGE.HEADER.status       = MESSAGE.SUCCESS_CREATED_ITEM.status
+                        MESSAGE.HEADER.status_code  = MESSAGE.SUCCESS_CREATED_ITEM.status_code
+                        MESSAGE.HEADER.message      = MESSAGE.SUCCESS_CREATED_ITEM.message
+                        MESSAGE.HEADER.response     = genero
+    
+                        return MESSAGE.HEADER//201
+                    }else{
+                        console.log(result)
+                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL//500
+                    }
+                }else{
+                    return validarDados //400
+                }
+            }else{
+                return MESSAGE.ERROR_CONTENT_TYPE//415
+            }
+         }else{
+            return MESSAGE.ERROR_CONTENT_TYPE//415
+         }
+        } catch (error) {
+            return MESSAGE_DEFAULT.ERROR_INTERNAL_SERVER_CONTROLLER//500
         }
-    } catch (error) {
-        
-    }
 }
 const validarDadosGenero = async function(genero){
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
+
     if(genero.nome == '' || genero.nome == null || genero.nome == undefined || genero.nome.length > 100){
         MESSAGE.ERROR_REQUIRED_FILDS.invalid_fild = 'Atrbuto [NOME] invalido!!!!!!!!' 
         return MESSAGE.ERROR_REQUIRED_FILDS//400
-}else if(genero.descricao == undefined){
-    MESSAGE.ERROR_REQUIRED_FILDS.invalid_fild = 'Atrbuto [DESCRIÇÂO] invalido!!!!!!!!'
-    return MESSAGE.ERROR_REQUIRED_FILDS//400
-}else{
-    return false
-}
+    }else if(genero.descricao == undefined){
+        MESSAGE.ERROR_REQUIRED_FILDS.invalid_fild = 'Atrbuto [DESCRIÇÂO] invalido!!!!!!!!'
+        return MESSAGE.ERROR_REQUIRED_FILDS//400
+    }else{
+        return false
+    }
 
 }
 module.exports = {
     listaGenero,
-    filtroGeneroId
+    filtroGeneroId,
+    inserirGenero,
+    validarDadosGenero
 }

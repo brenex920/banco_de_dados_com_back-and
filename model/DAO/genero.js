@@ -44,9 +44,9 @@ const getSelectByIdAllGenero = async function(id){
 }
 const setInsertGenero = async function(genero){
     try {
-        let sql = `insert into tbl_filme(nome, descricao)
+        let sql = `insert into tbl_genero(nome, descricao)
         values('${genero.nome}',
-                '${filme.sinopse}');`
+                '${genero.sinopse}');`
       let result = await prisma.$queryRawUnsafe(sql)
 
         if(Array.isArray(result)){
@@ -60,8 +60,32 @@ const setInsertGenero = async function(genero){
 
   
 }
+
+
+const getSellectLastIdGenero = async function(){
+
+    try{
+        
+        // script SQL 
+        let sql = `select * from tbl_genero order by id_cliente desc limit 1`
+
+        // executa no Banco de dados o script SQL 
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        //validação para indetificar se o retorno do BD e um ARRAY (vazio ou com dados)
+        if(Array.isArray(result)){
+            return Number(result[0].id) 
+        }else{
+            return false
+        }
+
+    } catch(error){
+        return false
+    }
+}
 module.exports = {
     getAllDadosGenero,
     getSelectByIdAllGenero,
-    setInsertGenero
+    setInsertGenero,
+    getSellectLastIdGenero
 }

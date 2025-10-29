@@ -29,6 +29,7 @@ app.use((request, response, next)=>{
 
 const controllerfilme = require('./controller/controller_filme.js')
 const controllergenero = require('./controller/controller_genero.js')
+const controllerPersonagem = require('./controller/controller_personagem.js')
 
 // Endpoint para o CRUD filmes 
 app.get('/v1/locadora/filmes', cors(),async function(request, response){
@@ -103,6 +104,31 @@ app.get('/v1/locadora/genero/:id', cors(), async function(req, res){
 
     res.status(genero.status_code)
     res.json(genero)
+})
+
+app.post('/v1/locadora/genero', cors(), bodyParserJSON, async function(req, res){
+    // recebe o objeto JSON pelo body da requisição
+    let dadosBody = req.body
+
+    let contentType = req.headers['content-type']
+
+    //chama a função da controller para inserir o filme, enviamos os dados do body e o content-type
+    let genero = await controllergenero.inserirGenero(dadosBody, contentType)
+
+    res.status(genero.status_code)
+    res.json(genero)
+})
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//app da tabela PERSONAGEM
+
+
+app.get('/v1/locadora/personagens', cors(), async function(req, res){
+    let personagem = await controllerPersonagem.listaDePersonagens()
+
+        res.status(personagem.status_code)
+        res.json(personagem)
 })
 
 

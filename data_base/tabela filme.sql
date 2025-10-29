@@ -19,6 +19,21 @@ CREATE TABLE tbl_genero (
     descricao VARCHAR(200)
 );
 
+CREATE TABLE tbl_personagem (
+    id_personagem INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(150) NOT NULL,
+    universo VARCHAR(100) NOT NULL,
+    apelido VARCHAR(100) NULL,
+    genero VARCHAR(30) NOT NULL,
+    idade INT NOT NULL,
+    especie VARCHAR(100) NULL,
+    origem VARCHAR(150) NULL,
+    classe VARCHAR(100) NOT NULL,
+    habilidades VARCHAR(200) NULL,
+    caracteristica VARCHAR(200) NULL
+    
+);
+
 
 
 -- insert do filme
@@ -31,6 +46,12 @@ values('Carros','Ao viajar para a Califórnia, o famoso carro de corridas Relâm
 insert into tbl_genero(nome, descricao)
 values('romance', 'Um romance é uma narrativa em prosa longa e complexa que conta uma história fictícia, com múltiplas tramas, personagens bem desenvolvidos e um enredo detalhado');
 
+-- insert da tabela personagem
+
+insert into tbl_personagem(nome, universo, apelido, genero, idade, especie, origem, classe, habilidades, caracteristica)
+values('deadpool', 'marvel', 'homem que nao morre', 'masculino', 33, 'humana', '', 'pobre', 'nao morrer, regeneraçao forte', 'mascara e roupa preta');
+
+select * from tbl_personagem;
 
 select * from tbl_genero;
 
